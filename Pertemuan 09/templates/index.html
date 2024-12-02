@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD MYSQL</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container-fluid heading">
+        <div class="text-center mt-4">
+            <h1>Data Mahasiswa STIKOM Banyuwangi</h1>
+        </div>
+    </div>
+    <div class="container-fluid main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 mt-4">
+                <h2>Daftar Mahasiswa <button class="btn pull-right main-btn btn-primary" data-toggle="modal" data-target="#myModal">Tambah Data</button></h2>
+                {% for message in get_flashed_messages() %}
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: '{{ message }}',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    </script>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <table class="table">
+                    <tr class="heading-row">
+                        <th>NIM</th>
+                        <th>NAMA</th>
+                        <th>ALAMAT</th>
+                        <th>JURUSAN</th>
+                        <th>HP</th>
+                        <th>ACTION</th>
+                    </tr>
+                    {% for row in students %}
+                    <tr>
+                        <td>{{row[0]}}</td>
+                        <td>{{row[1]}}</td>
+                        <td>{{row[2]}}</td>
+                        <td>{{row[3]}}</td>
+                        <td>{{row[4]}}</td>
+                        <td>
+                            <a href="#" class="btn btn-warning" role="button" data-toggle="modal" data-target="#modal-edit{{row[0]}}">Update</a>
+                            <a href="/delete/{{row[0]}}" class="btn btn-danger" role="button" onclick="confirmDelete(event, '{{row[0]}}')">Hapus</a>
+                        </td>
+                    </tr>
+                    <div id="modal-edit{{row[0]}}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Silahkan Update Data</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{url_for('update')}}" method="POST">
+                                        <div class="form-group">
+                                            <label for="nim">NIM :</label>
+                                            <input type="hidden" name="id" class="form-control" value="{{row[0]}}">
+                                            <input type="text" name="nim" class="form-control" value="{{row[0]}}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nama">Nama :</label>
+                                            <input type="text" name="nama" class="form-control" value="{{row[1]}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="alamat">Alamat :</label>
+                                            <input type="text" name="alamat" class="form-control" value="{{row[2]}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="jurusan">Jurusan :</label>
+                                            <input type="text" name="jurusan" class="form-control" value="{{row[3]}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="no_hp">No Hp :</label>
+                                            <input type="text" name="no_hp" class="form-control" value="{{row[4]}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn main-btn" name="submit" type="submit">Update Data</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn main-btn" type="button" data-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Silahkan Input Data</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="{{url_for('insert')}}" method="POST">
+                        <div class="form-group">
+                            <label for="nim">NIM</label>
+                            <input type="text" name="nim" id="nim" class="form-control" placeholder="Masukkan NIM" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nama">Nama</label>
+                            <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan nama anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="alamat">Alamat</label>
+                            <input type="text" name="alamat" id="alamat" class="form-control" placeholder="Masukkan alamat anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jurusan">Jurusan</label>
+                            <input type="text" name="jurusan" id="jurusan" class="form-control" placeholder="Masukkan Jurusan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="no_hp">No Hp / WA</label>
+                            <input type="text" name="no_hp" id="no_hp" class="form-control" placeholder="Masukkan no hp / wa" required>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn main-btn" name="submit" type="submit">Simpan Data</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn main-btn" type="button" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmDelete(event, id) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/delete/${id}`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
